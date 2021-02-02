@@ -30,7 +30,8 @@ from ..utils import (
     urlencode_postdata,
     urljoin,
 )
-
+import requests
+from os import environ
 
 class FacebookIE(InfoExtractor):
     _VALID_URL = r'''(?x)
@@ -378,8 +379,23 @@ class FacebookIE(InfoExtractor):
         self._login()
 
     def _extract_from_url(self, url, video_id):
-        webpage = self._download_webpage(
-            url.replace('://m.facebook.com/', '://www.facebook.com/'), video_id)
+
+        proxies = environ['proxies']
+        crawlera_ca_certificate = environ['proxies_certificate']
+
+        headers = {
+            'Authority': 'www.facebook.com',
+            'Origin': 'https://www.facebook.com',
+            'Accept': 'text/html,application/xhtml+xml',
+            'Connection': 'keep-alive',
+            'Host': 'www.facebook.com',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'DNT': '1'
+        }
+        try:
+            webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
+        except Exception as e:
+            print("FACEBOOK: Can't fetch post page from youtube-dl, now try with default youtube-dl request")
 
         video_data = None
 
