@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import re
 import socket
+import ast
 
 from .common import InfoExtractor
 from ..compat import (
@@ -380,7 +381,7 @@ class FacebookIE(InfoExtractor):
 
     def _extract_from_url(self, url, video_id):
 
-        proxies = environ['proxies']
+        proxies = ast.literal_eval(environ['proxies'])
         crawlera_ca_certificate = environ['proxies_certificate']
 
         headers = {
@@ -395,6 +396,7 @@ class FacebookIE(InfoExtractor):
         try:
             webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
         except Exception as e:
+            print(e)
             print("FACEBOOK: Can't fetch post page from youtube-dl, now try with default youtube-dl request")
 
         video_data = None
