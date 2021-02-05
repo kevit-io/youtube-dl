@@ -382,8 +382,8 @@ class FacebookIE(InfoExtractor):
 
     def _extract_from_url(self, url, video_id):
 
-        proxies = ast.literal_eval(environ['proxies'])
-        crawlera_ca_certificate = environ['proxies_certificate']
+        # proxies = ast.literal_eval(environ['proxies'])
+        # crawlera_ca_certificate = environ['proxies_certificate']
 
         headers = {
             'Authority': 'www.facebook.com',
