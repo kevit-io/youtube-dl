@@ -396,7 +396,7 @@ class FacebookIE(InfoExtractor):
         }
         for no_of_try in range(3):
             try:
-                webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
+                webpage = '<html><head><title>Redirecting...</title><script type="text/javascript" nonce="ge2IHm1c">/*<![CDATA[*/(function(){function si_cj(m){setTimeout(function(){new Image().src="https:\/\/error.facebook.com\/common\/scribe_endpoint.php?c=si_clickjacking&t=8595"+"&m="+m;},5000);}if(top!=self){try{if(parent!=top){throw 1;}var si_cj_d=["apps.facebook.com","apps.beta.facebook.com"];var href=top.location.href.toLowerCase();for(var i=0;i<si_cj_d.length;i++){if (href.indexOf(si_cj_d[i])>=0){throw 1;}}si_cj("3 https:\/\/www.facebook.com\/sbsnews\/");}catch(e){si_cj("1 \thttps:\/\/www.facebook.com\/sbsnews\/");window.document.write("\u003Cstyle nonce=\"ge2IHm1c\">body * {display:none !important;}\u003C\/style>\u003Ca href=\"#\" onclick=\"top.location.href=window.location.href\" style=\"display:block !important;padding:10px\">Go to Facebook.com\u003C\/a>");/*SDYGOKkl*/}}}())/*]]>*/</script><script nonce="ge2IHm1c">window.location.replace("https:\/\/m.facebook.com\/125982670754724\/videos\/125750759419526");</script><meta http-equiv="refresh" content="0;url=https://m.facebook.com/125982670754724/videos/125750759419526" /></head><body></body></html>'
                 break
             except Exception as e:
                 logging.error(e)
