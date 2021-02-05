@@ -403,8 +403,6 @@ class FacebookIE(InfoExtractor):
                 logging.error("FACEBOOK: Can't fetch post page from youtube-dl, now try with default youtube-dl request")
                 webpage = ''
 
-        logging.error(webpage)
-
         video_data = None
 
         def extract_video_data(instances):
