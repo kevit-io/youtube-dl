@@ -384,7 +384,7 @@ class FacebookIE(InfoExtractor):
 
         proxies = ast.literal_eval(environ['proxies'])
         use_verify = environ['use_proxy_certificate']
-        if use_verify:
+        if use_verify == "true":
             crawlera_ca_certificate = environ['proxies_certificate']
         else:
             crawlera_ca_certificate = False
