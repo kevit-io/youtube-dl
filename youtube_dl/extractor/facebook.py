@@ -398,13 +398,14 @@ class FacebookIE(InfoExtractor):
             'Accept-Language': 'en-US,en;q=0.9',
             'DNT': '1'
         }
-        for no_of_try in range(3):
+        for no_of_try in range(6):
             try:
                 webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
-                break
+                if 'Log In or Sign up to View' not in webpage:
+                    break
             except Exception as e:
                 logging.error(e)
-                logging.error("FACEBOOK: Can't fetch post page from youtube-dl, now try with default youtube-dl request")
+                logging.error("FACEBOOK: Can't fetch post page with proxy, now try with default youtube-dl request")
                 webpage = ''
 
         video_data = None
