@@ -392,7 +392,8 @@ class FacebookIE(InfoExtractor):
         else:
             crawlera_ca_certificate = False
 
-        logging.error(proxies, specific_fb_proxy)
+        logging.error(proxies)
+        logging.error(f"---------{specific_fb_proxy}----")
 
         headers = {
             'Authority': 'www.facebook.com',
@@ -406,7 +407,7 @@ class FacebookIE(InfoExtractor):
         for no_of_try in range(6):
             try:
                 webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
-                if 'Log In or Sign up to View' not in webpage:
+                if '>You must log in to continue' not in webpage:
                     break
             except Exception as e:
                 logging.error(e)
@@ -417,7 +418,7 @@ class FacebookIE(InfoExtractor):
             for no_of_try in range(4):
                 try:
                     webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy).text
-                    if 'Log In or Sign up to View' not in webpage:
+                    if '>You must log in to continue' not in webpage:
                         break
                 except Exception as e:
                     logging.error(e)
@@ -426,7 +427,7 @@ class FacebookIE(InfoExtractor):
 
         if '>You must log in to continue' in webpage:
             logging.error("something wrong")
-        
+
         video_data = None
 
         def extract_video_data(instances):
