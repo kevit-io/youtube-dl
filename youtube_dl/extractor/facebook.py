@@ -392,9 +392,6 @@ class FacebookIE(InfoExtractor):
         else:
             crawlera_ca_certificate = False
 
-        logging.error(proxies)
-        logging.error(f"---------{specific_fb_proxy}----")
-
         headers = {
             'Authority': 'www.facebook.com',
             'Origin': 'https://www.facebook.com',
@@ -424,9 +421,6 @@ class FacebookIE(InfoExtractor):
                     logging.error(e)
                     logging.error("FACEBOOK: Can't fetch post page with proxy, now try with default youtube-dl request")
                     webpage = ''
-
-        if '>You must log in to continue' in webpage:
-            logging.error("something wrong")
 
         video_data = None
 
