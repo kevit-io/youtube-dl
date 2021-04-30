@@ -384,6 +384,9 @@ class FacebookIE(InfoExtractor):
 
         proxies = ast.literal_eval(environ['proxies'])
         use_verify = environ['use_proxy_certificate']
+        specific_fb_proxy = None
+        if environ.get('specific_fb_proxy'):
+            specific_fb_proxy = ast.literal_eval(environ['specific_fb_proxy'])
         if use_verify == "true":
             crawlera_ca_certificate = environ['proxies_certificate']
         else:
@@ -407,6 +410,17 @@ class FacebookIE(InfoExtractor):
                 logging.error(e)
                 logging.error("FACEBOOK: Can't fetch post page with proxy, now try with default youtube-dl request")
                 webpage = ''
+
+        if not webpage and specific_fb_proxy:
+            for no_of_try in range(4):
+                try:
+                    webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy).text
+                    if 'Log In or Sign up to View' not in webpage:
+                        break
+                except Exception as e:
+                    logging.error(e)
+                    logging.error("FACEBOOK: Can't fetch post page with proxy, now try with default youtube-dl request")
+                    webpage = ''
 
         video_data = None
 
