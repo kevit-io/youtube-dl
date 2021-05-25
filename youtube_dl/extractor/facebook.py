@@ -403,19 +403,19 @@ class FacebookIE(InfoExtractor):
         }
         for no_of_try in range(6):
             try:
-                webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
-                if '>You must log in to continue' not in webpage:
+                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy).text
+                if '<div class="_585r _50f4">' not in webpage:
                     break
             except Exception as e:
                 logging.error(e)
                 logging.error("FACEBOOK: Can't fetch post page with proxy, now try with default youtube-dl request")
                 webpage = ''
 
-        if not webpage and specific_fb_proxy:
+        if '<div class="_585r _50f4">' in webpage and proxies:
             for no_of_try in range(4):
                 try:
-                    webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy).text
-                    if '>You must log in to continue' not in webpage:
+                    webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
+                    if '<div class="_585r _50f4">' not in webpage:
                         break
                 except Exception as e:
                     logging.error(e)
