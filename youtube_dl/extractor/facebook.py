@@ -382,15 +382,17 @@ class FacebookIE(InfoExtractor):
 
     def _extract_from_url(self, url, video_id):
 
+        crawlera_ca_certificate = None
         proxies = ast.literal_eval(environ['proxies'])
         use_verify = environ['use_proxy_certificate']
+        sp_fb_verify = environ['sp_fb_verify']
         specific_fb_proxy = None
         if environ.get('specific_fb_proxy'):
             specific_fb_proxy = ast.literal_eval(environ['specific_fb_proxy'])
+            if sp_fb_verify == "true":
+                crawlera_ca_certificate = environ['proxies_certificate']
         if use_verify == "true":
             crawlera_ca_certificate = environ['proxies_certificate']
-        else:
-            crawlera_ca_certificate = False
 
         headers = {
             'Authority': 'www.facebook.com',
