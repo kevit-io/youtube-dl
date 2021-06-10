@@ -403,7 +403,7 @@ class FacebookIE(InfoExtractor):
         }
         for no_of_try in range(6):
             try:
-                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy).text
+                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy, verify=crawlera_ca_certificate).text
                 if '<div class="_585r _50f4">' not in webpage:
                     break
             except Exception as e:
@@ -414,7 +414,7 @@ class FacebookIE(InfoExtractor):
         if '<div class="_585r _50f4">' in webpage and proxies:
             for no_of_try in range(4):
                 try:
-                    webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
+                    webpage = requests.get(url, headers=headers, proxies=proxies).text
                     if '<div class="_585r _50f4">' not in webpage:
                         break
                 except Exception as e:
