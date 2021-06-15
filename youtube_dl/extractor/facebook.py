@@ -387,10 +387,11 @@ class FacebookIE(InfoExtractor):
         use_verify = environ['use_proxy_certificate']
         sp_fb_verify = environ['sp_fb_verify']
         specific_fb_proxy = None
+        specific_fb_certificate = None
         if environ.get('specific_fb_proxy'):
             specific_fb_proxy = ast.literal_eval(environ['specific_fb_proxy'])
             if sp_fb_verify == "true":
-                crawlera_ca_certificate = environ['proxies_certificate']
+                specific_fb_certificate = environ['proxies_certificate']
         if use_verify == "true":
             crawlera_ca_certificate = environ['proxies_certificate']
 
@@ -405,7 +406,7 @@ class FacebookIE(InfoExtractor):
         }
         for no_of_try in range(6):
             try:
-                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy, verify=crawlera_ca_certificate).text
+                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy, verify=specific_fb_certificate).text
                 if '<div class="_585r _50f4">' not in webpage:
                     break
             except Exception as e:
@@ -416,7 +417,7 @@ class FacebookIE(InfoExtractor):
         if '<div class="_585r _50f4">' in webpage and proxies:
             for no_of_try in range(4):
                 try:
-                    webpage = requests.get(url, headers=headers, proxies=proxies).text
+                    webpage = requests.get(url, headers=headers, proxies=proxies, verify=crawlera_ca_certificate).text
                     if '<div class="_585r _50f4">' not in webpage:
                         break
                 except Exception as e:
