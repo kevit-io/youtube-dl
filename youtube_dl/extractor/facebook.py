@@ -710,6 +710,7 @@ class FacebookIE(InfoExtractor):
             'thumbnail': thumbnail,
             'view_count': view_count,
             'subtitles': subtitles,
+            'html_page': webpage
         }
 
         return info_dict
