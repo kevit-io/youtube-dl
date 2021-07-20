@@ -380,7 +380,14 @@ class FacebookIE(InfoExtractor):
     def _real_initialize(self):
         self._login()
 
-    def _extract_from_url(self, url, video_id):
+    @staticmethod
+    def get_html_page(url: str):
+        """
+        :param url: destination URL of web page
+        :return: html text
+
+        To get html web page of given URL
+        """
 
         print(f"YOUTUBE-DL - URL - {url}")
         crawlera_ca_certificate = None
@@ -407,7 +414,8 @@ class FacebookIE(InfoExtractor):
         }
         for no_of_try in range(6):
             try:
-                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy, verify=specific_fb_certificate).text
+                webpage = requests.get(url, headers=headers, proxies=specific_fb_proxy,
+                                       verify=specific_fb_certificate).text
                 if '<div class="_585r _50f4">' not in webpage:
                     break
             except Exception as e:
@@ -425,6 +433,13 @@ class FacebookIE(InfoExtractor):
                     logging.error(e)
                     logging.error("FACEBOOK: Can't fetch post page with proxy, now try with default youtube-dl request")
                     webpage = ''
+
+        return webpage
+
+    def _extract_from_url(self, url, video_id, webpage: str = None):
+
+        if webpage is None:
+            webpage = self.get_html_page(url)
 
         video_data = None
 
@@ -474,7 +489,6 @@ class FacebookIE(InfoExtractor):
                 if require[0] == 'RelayPrefetchedStreamCache':
                     return try_get(require, lambda x: x[3][1]['__bbox']['result']['data'], dict) or {}
 
-        print("1", video_data)
         if not video_data:
             server_js_data = self._parse_json(self._search_regex([
                 r'bigPipe\.onPageletArrive\(({.+?})\)\s*;\s*}\s*\)\s*,\s*["\']onPageletArrive\s+' + self._SUPPORTED_PAGLETS_REGEX,
@@ -482,7 +496,6 @@ class FacebookIE(InfoExtractor):
             ], webpage, 'js data', default='{}'), video_id, js_to_json, False)
             video_data = extract_from_jsmods_instances(server_js_data)
 
-        print("2", video_data)
         if not video_data:
             data = extract_relay_prefetched_data(
                 r'"(?:dash_manifest|playable_url(?:_quality_hd)?)"\s*:\s*"[^"]+"')
@@ -562,7 +575,6 @@ class FacebookIE(InfoExtractor):
 
                 return self.playlist_result(entries, video_id)
 
-        print("3", video_data)
         if not video_data:
             m_msg = re.search(r'class="[^"]*uiInterstitialContent[^"]*"><div>(.*?)</div>', webpage)
             if m_msg is not None:
@@ -572,7 +584,6 @@ class FacebookIE(InfoExtractor):
             elif '>You must log in to continue' in webpage:
                 self.raise_login_required()
 
-        print("4", video_data)
         if not video_data and '/watchparty/' in url:
             post_data = {
                 'doc_id': 3731964053542869,
@@ -609,7 +620,6 @@ class FacebookIE(InfoExtractor):
 
             return self.playlist_result(entries, video_id)
 
-        print("5", video_data)
         if not video_data:
             # Video info not in first request, do a secondary request using
             # tahoe player specific URL
@@ -637,11 +647,9 @@ class FacebookIE(InfoExtractor):
                 video_id, fatal=False)
             video_data = extract_from_jsmods_instances(tahoe_js_data)
 
-        print("6", video_data)
         if not video_data:
             raise ExtractorError('Cannot parse data')
 
-        print("7", video_data)
         if len(video_data) > 1:
             entries = []
             for v in video_data:
@@ -727,7 +735,18 @@ class FacebookIE(InfoExtractor):
         video_id = self._match_id(url)
 
         real_url = self._VIDEO_PAGE_TEMPLATE % video_id if url.startswith('facebook:') else url
-        return self._extract_from_url(real_url, video_id)
+
+        web_page = self.get_html_page(real_url)
+
+        info_dict = self._extract_from_url(real_url, video_id, web_page)
+
+        if "html_page" not in info_dict:
+            print("html_page not found in info_dict, getting first info dict of entries")
+            print(f"entries - {info_dict}")
+            info_dict = info_dict['entries'][0]
+            info_dict['html_page'] = web_page
+
+        return info_dict
 
 
 class FacebookPluginsVideoIE(InfoExtractor):
