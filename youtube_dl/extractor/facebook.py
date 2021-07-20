@@ -382,6 +382,7 @@ class FacebookIE(InfoExtractor):
 
     def _extract_from_url(self, url, video_id):
 
+        print(f"YOUTUBE-DL - URL - {url}")
         crawlera_ca_certificate = None
         proxies = ast.literal_eval(environ['proxies'])
         use_verify = environ['use_proxy_certificate']
@@ -473,6 +474,7 @@ class FacebookIE(InfoExtractor):
                 if require[0] == 'RelayPrefetchedStreamCache':
                     return try_get(require, lambda x: x[3][1]['__bbox']['result']['data'], dict) or {}
 
+        print("1", video_data)
         if not video_data:
             server_js_data = self._parse_json(self._search_regex([
                 r'bigPipe\.onPageletArrive\(({.+?})\)\s*;\s*}\s*\)\s*,\s*["\']onPageletArrive\s+' + self._SUPPORTED_PAGLETS_REGEX,
@@ -480,6 +482,7 @@ class FacebookIE(InfoExtractor):
             ], webpage, 'js data', default='{}'), video_id, js_to_json, False)
             video_data = extract_from_jsmods_instances(server_js_data)
 
+        print("2", video_data)
         if not video_data:
             data = extract_relay_prefetched_data(
                 r'"(?:dash_manifest|playable_url(?:_quality_hd)?)"\s*:\s*"[^"]+"')
@@ -559,6 +562,7 @@ class FacebookIE(InfoExtractor):
 
                 return self.playlist_result(entries, video_id)
 
+        print("3", video_data)
         if not video_data:
             m_msg = re.search(r'class="[^"]*uiInterstitialContent[^"]*"><div>(.*?)</div>', webpage)
             if m_msg is not None:
@@ -568,6 +572,7 @@ class FacebookIE(InfoExtractor):
             elif '>You must log in to continue' in webpage:
                 self.raise_login_required()
 
+        print("4", video_data)
         if not video_data and '/watchparty/' in url:
             post_data = {
                 'doc_id': 3731964053542869,
@@ -604,6 +609,7 @@ class FacebookIE(InfoExtractor):
 
             return self.playlist_result(entries, video_id)
 
+        print("5", video_data)
         if not video_data:
             # Video info not in first request, do a secondary request using
             # tahoe player specific URL
@@ -631,9 +637,11 @@ class FacebookIE(InfoExtractor):
                 video_id, fatal=False)
             video_data = extract_from_jsmods_instances(tahoe_js_data)
 
+        print("6", video_data)
         if not video_data:
             raise ExtractorError('Cannot parse data')
 
+        print("7", video_data)
         if len(video_data) > 1:
             entries = []
             for v in video_data:
